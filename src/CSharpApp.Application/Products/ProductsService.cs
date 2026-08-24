@@ -1,4 +1,4 @@
-using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using CSharpApp.Core.Dtos;
 
@@ -53,10 +53,7 @@ public class ProductsService : IProductsService
     {
         var httpClient = _httpClientFactory.CreateClient("RestApi");
 
-        var json = JsonSerializer.Serialize(product);
-        using var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await httpClient.PostAsync(_restApiSettings.Products, content);
+        var response = await httpClient.PostAsJsonAsync(_restApiSettings.Products, product); 
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
