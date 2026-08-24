@@ -1,4 +1,6 @@
+using CSharpApp.Application.Auth;
 using CSharpApp.Application.Categories;
+using CSharpApp.Infrastructure.Authentication;
 
 namespace CSharpApp.Infrastructure.Configuration;
 
@@ -14,7 +16,8 @@ public static class DefaultConfiguration
 
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<ICategoriesService, CategoriesService>();
-
+        services.AddScoped<IAuthService, AuthService>();
+        
         return services;
     }
 }
