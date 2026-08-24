@@ -102,4 +102,26 @@ versionedEndpointRouteBuilder.MapPut(
     .WithName("UpdateCategory")
     .HasApiVersion(1.0);
 
+versionedEndpointRouteBuilder.MapPost(
+    "api/v{version:apiVersion}/auth/login",
+    async ([FromServices] IAuthService authService) =>
+    {
+        var response = await authService.Login();
+
+        return Results.Ok(response);
+    })
+    .WithName("Login")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder.MapGet(
+    "api/v{version:apiVersion}/auth/profile",
+    async ([FromServices] IAuthService authService) =>
+    {
+        var profile = await authService.GetProfile();
+
+        return Results.Ok(profile);
+    })
+    .WithName("GetProfile")
+    .HasApiVersion(1.0);
+
 app.Run();
