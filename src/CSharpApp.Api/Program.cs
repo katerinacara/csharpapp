@@ -1,5 +1,6 @@
 using CSharpApp.Core.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddDefaultConfiguration();
 builder.Services.AddHttpConfiguration(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddApiVersioning();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 
 var app = builder.Build();
 
