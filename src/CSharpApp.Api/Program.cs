@@ -1,4 +1,5 @@
 using CSharpApp.Core.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ builder.Logging.ClearProviders().AddSerilog(logger);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDefaultConfiguration();
-builder.Services.AddHttpConfiguration();
+builder.Services.AddHttpConfiguration(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddApiVersioning();
 
@@ -21,11 +22,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-//app.UseHttpsRedirection();
 
 var versionedEndpointRouteBuilder = app.NewVersionedApi();
 
-versionedEndpointRouteBuilder.MapGet("api/v{version:apiVersion}/getproducts", async (IProductsService productsService) =>
+versionedEndpointRouteBuilder.MapGet(
+    "api/v{version:apiVersion}/getproducts",
+    async ([FromServices] IProductsService productsService) =>
     {
         var products = await productsService.GetProducts();
         return products;
@@ -34,8 +36,8 @@ versionedEndpointRouteBuilder.MapGet("api/v{version:apiVersion}/getproducts", as
     .HasApiVersion(1.0);
 
 versionedEndpointRouteBuilder.MapGet(
-    "api/v{version:apiVersion}/getproducts/{id:int}",
-    async (int id, IProductsService productsService) =>
+    "api/v{version:apiVersion}/getproduct/{id:int}",
+    async (int id, [FromServices] IProductsService productsService) =>
     {
         var product = await productsService.GetProduct(id);
         return product;
@@ -43,18 +45,16 @@ versionedEndpointRouteBuilder.MapGet(
     .WithName("GetProduct")
     .HasApiVersion(1.0);
 
-versionedEndpointRouteBuilder.MapGet(
-    "api/v{version:apiVersion}/getproduct/{id:int}",
+versionedEndpointRouteBuilder.MapPost(
+    "api/v{version:apiVersion}/createproduct",
     async (
         CreateProductRequest product,
-        IProductsService productsService) =>
+        [FromServices] IProductsService productsService) =>
     {
         var createdProduct = await productsService.CreateProduct(product);
         return Results.Ok(createdProduct);
     })
     .WithName("CreateProduct")
     .HasApiVersion(1.0);
-
-
 
 app.Run();
