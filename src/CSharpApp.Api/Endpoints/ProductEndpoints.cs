@@ -8,7 +8,7 @@ namespace CSharpApp.Api.Endpoints
     {
         public static void MapProductEndpoints(this IVersionedEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("api/v{version:apiVersion}/getproducts",
+            endpoints.MapGet("api/v{version:apiVersion}/products",
                 async ([FromServices] IProductsService productsService) =>
                 {
                     var products = await productsService.GetProducts();
@@ -18,7 +18,7 @@ namespace CSharpApp.Api.Endpoints
                 .WithSummary("Get all products")
                 .HasApiVersion(1.0);
 
-            endpoints.MapGet("api/v{version:apiVersion}/getproduct/{id:int}",
+            endpoints.MapGet("api/v{version:apiVersion}/products/{id:int}",
                 async (int id, [FromServices] IProductsService productsService) =>
                 {
                     var product = await productsService.GetProduct(id);
@@ -28,7 +28,7 @@ namespace CSharpApp.Api.Endpoints
                 .WithSummary("Get a product by ID")
                 .HasApiVersion(1.0);
 
-            endpoints.MapPost("api/v{version:apiVersion}/createproduct",
+            endpoints.MapPost("api/v{version:apiVersion}/products",
                 async (
                     CreateProductRequest product,
                     [FromServices] IProductsService productsService) =>
