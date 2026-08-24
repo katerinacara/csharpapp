@@ -29,7 +29,6 @@ public class CategoriesService : ICategoriesService
 
         var httpClient = _httpClientFactory.CreateClient("RestApi");
 
-        httpClient.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
         var response = await httpClient.GetAsync(_restApiSettings.Categories);
         response.EnsureSuccessStatusCode();
 
@@ -49,8 +48,6 @@ public class CategoriesService : ICategoriesService
     {
         var httpClient = _httpClientFactory.CreateClient("RestApi");
 
-        httpClient.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
-
         var response = await httpClient.GetAsync(
             $"{_restApiSettings.Categories}/{id}");
 
@@ -66,8 +63,6 @@ public class CategoriesService : ICategoriesService
     public async Task<Category> CreateCategory(CreateCategoryRequest request)
     {
         var httpClient = _httpClientFactory.CreateClient("RestApi");
-
-        httpClient.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
 
         var response = await httpClient.PostAsJsonAsync(
             _restApiSettings.Categories,
@@ -87,8 +82,6 @@ public class CategoriesService : ICategoriesService
         UpdateCategoryRequest request)
     {
         var httpClient = _httpClientFactory.CreateClient("RestApi");
-
-        httpClient.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
 
         var response = await httpClient.PutAsJsonAsync(
             $"{_restApiSettings.Categories}/{id}",
