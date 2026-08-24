@@ -57,4 +57,49 @@ versionedEndpointRouteBuilder.MapPost(
     .WithName("CreateProduct")
     .HasApiVersion(1.0);
 
+versionedEndpointRouteBuilder.MapGet(
+    "api/v{version:apiVersion}/getcategories",
+    async ([FromServices] ICategoriesService categoriesService) =>
+    {
+        var categories = await categoriesService.GetCategories();
+        return categories;
+    })
+    .WithName("GetCategories")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder.MapGet(
+    "api/v{version:apiVersion}/getcategories/{id:int}",
+    async (int id, [FromServices] ICategoriesService categoriesService) =>
+    {
+        var category = await categoriesService.GetCategory(id);
+        return category;
+    })
+    .WithName("GetCategory")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder.MapPost(
+    "api/v{version:apiVersion}/createcategory",
+    async (
+        CreateCategoryRequest request,
+        [FromServices] ICategoriesService categoriesService) =>
+    {
+        var category = await categoriesService.CreateCategory(request);
+        return Results.Ok(category);
+    })
+    .WithName("CreateCategory")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder.MapPut(
+    "api/v{version:apiVersion}/updatecategory/{id:int}",
+    async (
+        int id,
+        UpdateCategoryRequest request,
+        [FromServices] ICategoriesService categoriesService) =>
+    {
+        var category = await categoriesService.UpdateCategory(id, request);
+        return Results.Ok(category);
+    })
+    .WithName("UpdateCategory")
+    .HasApiVersion(1.0);
+
 app.Run();
