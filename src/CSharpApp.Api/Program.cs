@@ -1,4 +1,5 @@
 using CSharpApp.Api.Endpoints;
+using CSharpApp.Api.Middleware;
 using CSharpApp.Core.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -28,6 +29,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<Middleware>();
 
 var versionedEndpointRouteBuilder = app.NewVersionedApi();
 
