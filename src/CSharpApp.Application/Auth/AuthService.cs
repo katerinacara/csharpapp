@@ -36,8 +36,6 @@ namespace CSharpApp.Application.Auth
         {
             var client = _httpClientFactory.CreateClient("RestApi");
 
-            client.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
-
             var request = new AuthRequest
             {
                 Email = _restApiSettings.Username!,
@@ -62,8 +60,6 @@ namespace CSharpApp.Application.Auth
         public async Task<Profile> GetProfile()
         {
             var client = _httpClientFactory.CreateClient("RestApi");
-
-            client.BaseAddress = new Uri(_restApiSettings.BaseUrl!);
 
             var response = await client.GetAsync("auth/profile");
 
