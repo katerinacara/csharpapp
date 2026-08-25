@@ -1,6 +1,7 @@
 using CSharpApp.Api.Endpoints;
 using CSharpApp.Api.Middleware;
 using CSharpApp.Core.Dtos;
+using CSharpApp.Application.Products.Queries.GetProducts;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -11,7 +12,10 @@ builder.Logging.ClearProviders().AddSerilog(logger);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(GetProductsQuery).Assembly));
 builder.Services.AddDefaultConfiguration();
 builder.Services.AddHttpConfiguration(builder.Configuration);
 builder.Services.AddProblemDetails();
