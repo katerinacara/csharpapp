@@ -1,43 +1,198 @@
-# C# Accepted Assessment app
+# C# Accepted Assessment App
 
-An application for C# (.net) knowledge assessment
+A .NET web application that integrates with third-party APIs to provide product, category, and authentication functionality.
 
-## Description
+## Overview
 
-This is a web application that interacts with a 3nd party service (<https://fakeapi.platzi.com>/<https://api.escuelajs.co>) and serves data
+This project was developed as part of the Accepted C# technical assessment.
 
-We have to do some code refactoring and implement some new features
+The assignment focused on improving the existing application architecture, implementing new functionality, improving authentication and observability, adding testing and Docker support, and applying CQRS to the Product feature.
 
-## Code refactoring
+## Implemented Features
 
-Seems that the use of http client is not so much efficient
+### 1. HTTP Client Refactoring
 
-Let's make a different, more solid, approach/implementation
+Refactored the HTTP client implementation to provide a more structured and reliable approach for communicating with the third-party API.
 
-## New features
+The application uses the configured HTTP client infrastructure and Polly-based resilience support where applicable.
 
-**#1**
+### 2. Products
 
-Right now only the **getAll** method supported for **products**
+Implemented the required Product operations:
 
-We have to implement **getOne** and **create** methods also
+* Get all products
+* Get a single product by ID
+* Create a product
 
-**#2**
+The Product endpoints are exposed through versioned API routes.
 
-Add implementation for **categories**
+### 3. CQRS for Products
 
-**#3**
+Implemented the CQRS pattern using MediatR for the Product feature.
 
-3nd party service supports JWT auth. We have to implement and support it. Use the credentials provided to appsettings.json file.
+#### Commands
 
-**#4**
+* `CreateProductCommand`
+* `CreateProductCommandHandler`
 
-We must measure and log the performance of the requests. Create a middleware to achieve this.
+#### Queries
 
-## Implementation
+* `GetProductQuery`
+* `GetProductQueryHandler`
+* `GetProductsQuery`
+* `GetProductsQueryHandler`
 
-* Try to understand and keep the architectural approach.
-* Add unit testing.
-* Add docker support.
-* Using CQRS pattern will be considered as a strong plus.
-* The attached collections (postman/insomnia) will help you with the requests.
+The API endpoints communicate with MediatR instead of directly calling the Product service:
+
+```text
+HTTP Request
+    ↓
+Product Endpoint
+    ↓
+MediatR
+    ↓
+Command / Query
+    ↓
+Handler
+    ↓
+IProductsService
+    ↓
+Third-party API
+```
+
+This separates request handling from the underlying business/service operations and keeps the API layer focused on HTTP concerns.
+
+### 4. Categories
+
+Added support for category operations, including the corresponding API endpoints, services, DTOs, and tests.
+
+### 5. JWT Authentication
+
+Implemented JWT authentication using the credentials and configuration provided by the application settings.
+
+The application supports authenticated requests and provides an authenticated profile endpoint.
+
+### 6. Request Performance Logging
+
+Added middleware to measure and log request performance.
+
+The middleware records request execution information, allowing the application to monitor the duration of incoming HTTP requests.
+
+### 7. Unit Testing
+
+Added unit tests covering the main application functionality, including:
+
+* Products
+* Categories
+* Authentication
+* Middleware
+
+Current test status:
+
+```text
+Total:   21
+Passed:  21
+Failed:  0
+Skipped: 0
+```
+
+### 8. Docker Support
+
+Added Docker support for running the application in a containerized environment.
+
+Included:
+
+* `Dockerfile`
+* `.dockerignore`
+
+## Architecture
+
+The solution follows a layered architecture:
+
+```text
+CSharpApp.Api
+    ↓
+CSharpApp.Application
+    ↓
+CSharpApp.Core
+
+CSharpApp.Infrastructure
+    ↓
+External API / Infrastructure concerns
+```
+
+The main projects are:
+
+| Project                    | Responsibility                                                |
+| -------------------------- | ------------------------------------------------------------- |
+| `CSharpApp.Api`            | API endpoints, middleware and application startup             |
+| `CSharpApp.Application`    | Application services, CQRS commands, queries and handlers     |
+| `CSharpApp.Core`           | DTOs, interfaces and shared domain contracts                  |
+| `CSharpApp.Infrastructure` | HTTP clients, authentication and infrastructure configuration |
+| `CSharpApp.Tests`          | Unit tests                                                    |
+
+## API
+
+The application uses versioned API endpoints.
+
+Example Product endpoints:
+
+```text
+GET  /api/v1/products
+GET  /api/v1/products/{id}
+POST /api/v1/products
+```
+
+Category and authentication endpoints are also available through the API.
+
+## Running the Application
+
+### Requirements
+
+* .NET 9 SDK
+* Docker (optional)
+
+### Run locally
+
+```bash
+dotnet restore
+dotnet build
+dotnet run --project src/CSharpApp.Api
+```
+
+### Run tests
+
+```bash
+dotnet test
+```
+
+## Docker
+
+Build the Docker image:
+
+```bash
+docker build -t csharpapp .
+```
+
+Run the container:
+
+```bash
+docker run -p 5225:5225 csharpapp
+```
+
+## Validation
+
+The implementation has been validated with:
+
+```bash
+dotnet build
+dotnet test
+```
+
+The current test suite passes with **21/21 tests successful**.
+
+## Development Notes
+
+The implementation preserves the existing service-based architecture while introducing CQRS through MediatR for Products.
+
+The CQRS implementation separates read and write operations into dedicated requests and handlers without unnecessarily changing the existing infrastructure and service layer.
